@@ -1,0 +1,130 @@
+:root {
+  --dark_accent_color: #3d2b6e;
+  --accent_color: #5c42a0;
+  --light_accent_color: #ede9f7;
+  --text_color: #1a1a2e;
+  --light_text: #f0eeff;
+  --border_color: #c9bfea;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--text_color);
+  background: #f8f7fc;
+  margin: 0;
+  padding: 0;
+}
+
+section {
+  width: 100%;
+}
+
+.content-wrapper {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2em 1.5em;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.title-wrapper {
+  align-items: center;
+  text-align: center;
+  color: var(--light_text);
+  padding: 3em 1.5em 2.5em;
+}
+
+.title-wrapper h1 {
+  font-size: 2.8em;
+  font-weight: 700;
+  margin: 0 0 0.3em;
+  line-height: 1.15;
+  color: #fff;
+}
+
+.title-wrapper h3 {
+  font-size: 1.1em;
+  font-weight: 400;
+  color: #d4caff;
+  margin: 0 0 0.8em;
+}
+
+.intro-text {
+  font-size: 0.95em;
+  color: #c4b8f0;
+  margin: 0.3em 0 0;
+}
+
+/* Nav buttons */
+.nav-buttons-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+  align-items: center;
+  margin-top: 1.5em;
+}
+
+.nav-buttons-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6em;
+  justify-content: center;
+}
+
+button.outline {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  color: #fff;
+  padding: 0.45em 1.1em;
+  border-radius: 6px;
+  font-size: 0.9em;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+button.outline:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #fff;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Main container */
+.main-container {
+  padding: 2em 0;
+}
+
+.content-box {
+  background: #fff;
+  border: 1px solid var(--border_color);
+  border-radius: 10px;
+  padding: 1.8em 2em;
+  width: 100%;
+}
+
+.text-title {
+  font-size: 1.3em;
+  font-weight: 600;
+  color: var(--dark_accent_color);
+  margin: 0 0 0.8em;
+}
+
+@media (max-width: 600px) {
+  .title-wrapper h1 {
+    font-size: 1.8em;
+  }
+  .content-wrapper {
+    padding: 1.5em 1em;
+  }
+}

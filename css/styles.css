@@ -128,3 +128,258 @@ a {
     padding: 1.5em 1em;
   }
 }
+
+/* Authors */
+.authors-line {
+  font-size: 1em;
+  margin-top: 0.6em;
+  color: #fff;
+}
+.affil-line {
+  font-size: 0.85em;
+  margin-top: 0.2em;
+}
+
+/* Per-university colors (on dark header background) */
+.aff-nyu     { color: var(--border_color); }
+.aff-stanford { color: #ffb347; }  /* Stanford cardinal → warm amber */
+.aff-cmu     { color: #ff8a8a; }   /* CMU red → soft red */
+
+/* Section headings */
+.section-title {
+  font-size: 1.4em;
+  font-weight: 700;
+  color: var(--dark_accent_color);
+  margin: 0 0 0.7em;
+  padding-bottom: 0.4em;
+  border-bottom: 2px solid var(--light_accent_color);
+}
+
+.subsection-title {
+  font-size: 1.05em;
+  font-weight: 600;
+  color: var(--accent_color);
+  margin: 1.4em 0 0.4em;
+}
+
+/* Lists */
+.metric-list {
+  margin: 0.5em 0 0.8em 1.2em;
+  line-height: 1.8;
+}
+
+/* Formula block */
+.formula-block {
+  background: var(--light_accent_color);
+  border: 1px solid var(--border_color);
+  border-radius: 8px;
+  padding: 1.4em 1.8em 1em;
+  margin: 1.2em 0 0.5em;
+  text-align: center;
+}
+
+.formula-caption {
+  font-size: 0.88em;
+  color: #555;
+  margin-top: 0.8em;
+  text-align: left;
+}
+
+/* Figures */
+.figure-block {
+  margin: 1.2em 0 0.5em;
+  text-align: center;
+}
+
+.figure-img {
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid var(--border_color);
+  border-radius: 8px;
+}
+
+.figure-caption {
+  font-size: 0.85em;
+  color: #666;
+  margin-top: 0.5em;
+  font-style: italic;
+}
+
+/* Middle ground — SVG circle effect */
+.middle-ground {
+  position: relative;
+  display: inline-block;
+  font-weight: 500;
+  color: var(--accent_color);
+  padding: 0 0.25em;
+  white-space: nowrap;
+}
+
+.middle-ground svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 130%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.middle-ground svg path {
+  stroke: var(--accent_color);
+  stroke-width: 10;
+  fill: none;
+}
+
+/* Highlight question */
+.highlight-question {
+  background: var(--light_accent_color);
+  border-left: 4px solid var(--accent_color);
+  padding: 0.8em 1em;
+  border-radius: 0 6px 6px 0;
+  margin-top: 1em;
+  font-size: 1em;
+}
+
+/* Explorer */
+.explorer-search {
+  width: 100%;
+  padding: 0.6em 0.9em;
+  font-size: 0.95em;
+  font-family: inherit;
+  border: 1.5px solid var(--border_color);
+  border-radius: 6px;
+  margin: 0.8em 0 0.6em;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.explorer-search:focus {
+  border-color: var(--accent_color);
+}
+
+.explorer-card {
+  border: 1px solid var(--border_color);
+  border-radius: 8px;
+  padding: 0.9em 1em;
+  margin-bottom: 0.8em;
+  background: #faf9fe;
+}
+
+.explorer-question {
+  font-size: 0.9em;
+  color: var(--text_color);
+  margin-bottom: 0.7em;
+  line-height: 1.5;
+}
+
+.badge-best {
+  display: inline-block;
+  background: var(--accent_color);
+  color: #fff;
+  font-size: 0.75em;
+  font-weight: 600;
+  padding: 0.15em 0.55em;
+  border-radius: 4px;
+  margin-right: 0.5em;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.explorer-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.model-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 0.78em;
+}
+
+.model-bar-best {
+  font-weight: 600;
+}
+
+.model-name {
+  width: 170px;
+  flex-shrink: 0;
+  color: #444;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.model-bar-best .model-name {
+  color: var(--dark_accent_color);
+}
+
+.bar-track {
+  flex: 1;
+  height: 10px;
+  background: #e8e4f5;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: #b8aee0;
+  border-radius: 5px;
+  transition: width 0.2s;
+}
+
+.bar-fill-best {
+  background: var(--accent_color);
+}
+
+.bar-label {
+  width: 46px;
+  text-align: right;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.model-bar-best .bar-label {
+  color: var(--dark_accent_color);
+}
+
+/* Citation */
+.citation-wrapper {
+  position: relative;
+}
+
+.citation-block {
+  background: #f4f2fc;
+  border: 1px solid var(--border_color);
+  border-radius: 8px;
+  padding: 1em 1.2em;
+  font-size: 0.85em;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 0.6em;
+  right: 0.6em;
+  background: var(--accent_color);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 0.3em 0.7em;
+  font-size: 0.8em;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.copy-btn:hover {
+  background: var(--dark_accent_color);
+}

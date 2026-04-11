@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>Diversity Router</title>
-    <meta name="description" content="Picking The Best Model for Diversity: Learning a Router for Sample Diversity" />
+    <meta name="description" content="No Single Best Model for Diversity: Learning a Router for Sample Diversity" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="css/normalize.css" />
@@ -14,14 +14,29 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
       crossorigin="anonymous"
     />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" crossorigin="anonymous" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+      onload="renderMathInElement(document.body, {delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
   </head>
   <body>
+    <!-- ===== HEADER ===== -->
     <section style="background-color: var(--dark_accent_color)">
       <div class="content-wrapper title-wrapper" style="flex-direction: column">
-        <h1>Diversity Router</h1>
-        <h3>Picking The Best Model for Diversity: Learning a Router for Sample Diversity</h3>
-        <p class="intro-text">
-          <!-- Authors -->
+        <!-- <h1>Diversity Router</h1> -->
+        <h1>No Single Best Model for Diversity: Learning a Router for Sample Diversity</h3>
+        <p class="intro-text authors-line">
+          Yuhan Liu<sup class="aff-nyu">♠</sup>&nbsp;
+          Fangyuan Xu<sup class="aff-nyu">♠</sup>&nbsp;
+          Vishakh Padmakumar<sup class="aff-stanford">♥</sup>&nbsp;
+          Daphne Ippolito<sup class="aff-cmu">♦</sup>&nbsp;
+          Eunsol Choi<sup class="aff-nyu">♠</sup>
+        </p>
+        <p class="intro-text affil-line">
+          <sup class="aff-nyu">♠</sup>&nbsp;<span class="aff-nyu">New York University</span>&emsp;
+          <sup class="aff-stanford">♥</sup>&nbsp;<span class="aff-stanford">Stanford University</span>&emsp;
+          <sup class="aff-cmu">♦</sup>&nbsp;<span class="aff-cmu">Carnegie Mellon University</span>
         </p>
         <div class="content-wrapper" style="margin-top: 1.5em; padding: 0">
           <div class="nav-buttons-container">
@@ -31,7 +46,7 @@
                   <i class="fa fa-home"></i> Home&nbsp;
                 </button>
               </a>
-              <a href="#">
+              <a href="https://arxiv.org/pdf/2604.02319">
                 <button class="outline">
                   <i class="fa fa-paperclip"></i> Paper&nbsp;
                 </button>
@@ -51,12 +66,251 @@
         </div>
       </div>
     </section>
+
     <section class="main-container">
-      <div class="content-wrapper">
+      <div class="content-wrapper" style="flex-direction: column; gap: 2em;">
+
+        <!-- ===== SECTION 0: Diversity Metric ===== -->
         <div class="content-box">
-          <p style="color: #888; font-style: italic; margin: 0">Paper coming soon.</p>
+          <h2 class="section-title">How Do We Measure Diversity?</h2>
+          <p>
+            We want to evaluate how <em>diverse</em> a set of generated answers is for a given question.
+            We assume two primitives:
+          </p>
+          <ul class="metric-list">
+            <li>$\operatorname{uniq}(q, A)$ — the number of <em>distinct</em> answers in set $A$ to question $q$.</li>
+            <li>$\operatorname{quality}(q, a_i)$ — the quality score of a single answer $a_i$ to question $q$.</li>
+          </ul>
+          <p>
+            From these, we propose the <strong>Diversity Coverage</strong> metric: it calculates the total quality scores
+            assigned to all unique answers in a predicted answer set, relative to the best possible answer set of the
+            exact same size. A score of 100% means the model's outputs are as diverse and high-quality as possible.
+          </p>
+          <div class="formula-block">
+            $$\operatorname{div\text{-}cov}(q, A) \coloneqq \frac{1}{\operatorname{max\text{-}uniq\text{-}sum}(q, B)} \sum_{a \,\in\, \operatorname{uniq}(q, A)} \operatorname{quality}(q, a)$$
+            <p class="formula-caption">
+              We define <strong>max-uniq-sum(<em>q</em>, <em>B</em>)</strong> as the maximum score achievable by generating
+              an answer set of size <em>B</em> where every answer is distinct and achieves maximum quality.
+            </p>
+          </div>
         </div>
-      </div>
+
+        <!-- ===== SECTION 1: Motivation ===== -->
+        <div class="content-box">
+          <h2 class="section-title">Motivation: No Single Model Dominates</h2>
+          <p>
+            Different language models excel at generating diverse answers for <em>a disjoint subset </em> of questions.
+            The figure below shows how  the best-performing model differs: A model is only considered to be the best model if its diversity scores
+            are 5% higher than the second most best candidate.
+          </p>
+          <div class="figure-block">
+            <img src="figures/teaser_v4_pie_3_png.png" alt="Distribution of best model per query" class="figure-img" />
+            <p class="figure-caption">Figure 1: Distribution of the best model per query across 1k NB-WildChat prompts.</p>
+          </div>
+
+          <h3 class="subsection-title">Explore: Which model wins for each question?</h3>
+          <p style="font-size:0.9em; color:#555; margin-top:0">
+            For each of NB-WildChat questions, we sampled 50 generations from each of 18 models and computed their
+            diversity coverage. 
+          </p>
+          <input type="text" id="explorerSearch" class="explorer-search" placeholder="Search questions…" />
+          <div id="explorerResults"></div>
+          <p id="explorerStatus" style="font-size:0.85em; color:#888; margin-top:0.5em; text-align:center"></p>
+        </div>
+
+        <!-- ===== SECTION 2: Oracle Router Improves Diversity A Lot ===== -->
+        <div class="content-box">
+          <h2 class="section-title">Oracle Router Improves Diversity A Lot</h2>
+          <p>
+            Assuming access to the diversity coverage scores of all LLMs on all queries,  an oracle router outperforms using random models, one single best model, or even two fixed best models.
+          </p>
+          <div class="figure-block">
+            <img src="figures/image.png" alt="Oracle router performance" class="figure-img" />
+            <p class="figure-caption">Figure:  Diversity coverage scores on Simple Questions (SQ), NB-Curated (Curated) and NB-WildChat (WildChat)</p>
+          </div>
+        </div>
+
+        <!-- ===== SECTION 3: Feasibility ===== -->
+        <div class="content-box">
+          <h2 class="section-title">However, the efficiency for oracle routers is ...</h2>
+          <p>
+          Much higher. To obtain oracle labels in practice, you would need to:
+          </p>
+          <ul class="metric-list">
+            <li>Run <strong>all 18 models</strong> on every question, and</li>
+            <li>Sample <strong>50 generations each</strong> — a total of 900 samples per query.</li>
+          </ul>
+          <p>
+            Alternatively, you could tick to overall best model (Top baseline, computed on some known set of queries) — but the diversity is suboptimal. The efficiency plot below illustrates this trade-off. Is there a <span class="middle-ground">middle ground<svg viewBox="0 0 500 150" preserveAspectRatio="none"><path d="M325,18C228.7-8.3,118.5,8.3,78,21C22.4,38.4,4.6,54.6,5.6,77.6c1.4,32.4,52.2,54,142.6,63.7c66.2,7.1,212.2,7.5,273.5-8.3c64.4-16.6,104.3-57.6,33.8-98.2C386.7-4.9,179.4-1.4,126.3,20.7"/></svg></span>?
+          </p>
+          <div class="figure-block">
+            <img src="figures/efficiency_plot_pseudo_router_png.png" alt="Efficiency vs. performance trade-off" class="figure-img" />
+            <p class="figure-caption">Figure: Efficiency vs. performance trade-off for the oracle and top overall strategies.</p>
+          </div>
+          <p class="highlight-question">
+            Can we <strong>train a router</strong> that predicts the best model per question — without running all 18 models?
+          </p>
+        </div>
+
+        <!-- ===== SECTION 4: Method & Results ===== -->
+        <div class="content-box">
+          <h2 class="section-title">Learning a Router: Method &amp; Main Results</h2>
+          <p>
+            We formulate router training as a classification problem over the question. We explore two formulations:
+          </p>
+          <ul class="metric-list">
+            <li>
+              <strong>M-way classification</strong> — predict a single best model among all M candidates directly.
+            </li>
+            <li>
+              <strong>Binary classification</strong> — for each model independently, predict whether it is the best
+              model for the given query.
+            </li>
+          </ul>
+          <p>
+            We find that binary routers with model-specific query encodings bring the greatest gains (26.3%), surpassing the Top overall baseline (23.8%).  This gain also generalizes to out-of-domain queries(NB-Curated).
+          </p>
+          <div class="figure-block">
+            <img src="figures/image-2.png" alt="Main results table" class="figure-img" />
+            <p class="figure-caption">Figure: Main results.  A per-query router selects over 18 models to maximize diversity coverage (Cov.).</p>
+          </div>
+        </div>
+
+        <!-- ===== SECTION 5: Top-2 Routing ===== -->
+        <div class="content-box">
+          <h2 class="section-title">Suggesting Two Models per Question</h2>
+          <p>
+            The router can also be extended to suggest the <strong>2</strong> models per question, which further improves diversity coverage.
+          </p>
+          <div class="figure-block">
+            <img src="figures/image-3.png" alt="Top-2 router results" class="figure-img" />
+            <!-- <p class="figure-caption">Figure: Top-2 model routing achieves higher diversity coverage with modest additional cost.</p> -->
+          </div>
+        </div>
+
+        <!-- ===== SECTION 6: Efficiency Analysis ===== -->
+        <div class="content-box">
+          <h2 class="section-title">Getting back to efficiency</h2>
+          <p>
+            It seems we find a good <span class="middle-ground">middle ground<svg viewBox="0 0 500 150" preserveAspectRatio="none"><path d="M325,18C228.7-8.3,118.5,8.3,78,21C22.4,38.4,4.6,54.6,5.6,77.6c1.4,32.4,52.2,54,142.6,63.7c66.2,7.1,212.2,7.5,273.5-8.3c64.4-16.6,104.3-57.6,33.8-98.2C386.7-4.9,179.4-1.4,126.3,20.7"/></svg></span>.
+            We analyze the end-to-end latency of our routing approach, comparing it against oracle and top overall
+            baselines.  The latency is measured by the actual model selections on the test split of NB-WildChat.
+          </p>
+          <div class="figure-block">
+            <img src="figures/stacked_bar_latency_ann_png.png" alt="End-to-end latency breakdown" class="figure-img" />
+            <p class="figure-caption">Figure:  Efficiency analysis comparing the time (seconds per query) across routing (Router), Top overall
+            (Top) and Top model per query (Oracle). Sample$_n$ denotes sample n answers.  </p>
+        </div>
+
+        <!-- ===== SECTION 7: Citation ===== -->
+        <div class="content-box">
+          <h2 class="section-title">Citation</h2>
+          <p>If you find this work useful, please cite:</p>
+          <div class="citation-wrapper">
+            <pre id="citationBlock" class="citation-block">@article{liu2026no,
+  title={No Single Best Model for Diversity: Learning a Router for Sample Diversity},
+  author={Liu, Yuhan and Xu, Fangyuan and Padmakumar, Vishakh and Ippolito, Daphne and Choi, Eunsol},
+  journal={arXiv preprint arXiv:2604.02319},
+  year={2026}
+}</pre>
+            <button class="copy-btn" onclick="copyCitation()">
+              <i class="fa fa-copy"></i> Copy
+            </button>
+          </div>
+        </div>
+
+      </div><!-- end content-wrapper -->
     </section>
+
+    <script>
+      // ===== INTERACTIVE EXPLORER =====
+      let allRows = [];
+      const MODEL_COLS = [
+        'llama-3.2-1b','llama-3.2-3b','llama-3.1-8b','llama-3.3-70b',
+        'qwen2.5-72b-instruct','qwen3-0.6b','qwen3-1.7b','qwen3-4b','qwen3-8b','qwen3-14b',
+        'gemma-3-1b-it','gemma-3-4b-it','gemma-3-12b-it','gemma-3-27b-it',
+        'olmo-2-0425-1b','olmo-2-1124-7b','olmo-2-1124-13b','olmo-2-0325-32b'
+      ];
+
+      fetch('figures/best_model_per_query.csv')
+        .then(r => r.text())
+        .then(text => {
+          const parsed = Papa.parse(text, { header: true, skipEmptyLines: true });
+          allRows = parsed.data;
+          renderExplorer('');
+        })
+        .catch(() => {
+          document.getElementById('explorerStatus').textContent =
+            'Could not load data (try serving with a local HTTP server).';
+        });
+
+      document.getElementById('explorerSearch').addEventListener('input', function () {
+        renderExplorer(this.value.trim().toLowerCase());
+      });
+
+      function renderExplorer(query) {
+        const filtered = query
+          ? allRows.filter(r => r.query_content && r.query_content.toLowerCase().includes(query))
+          : allRows;
+
+        const display = filtered.slice(0, 2);
+        const status = document.getElementById('explorerStatus');
+        const container = document.getElementById('explorerResults');
+
+        status.textContent = filtered.length === 0
+          ? 'No matching questions.'
+          : `Showing ${display.length} of ${filtered.length} question${filtered.length !== 1 ? 's' : ''}.`;
+
+        if (display.length === 0) { container.innerHTML = ''; return; }
+
+        container.innerHTML = display.map(row => {
+          const best = row.best_model_name || '';
+          const text = row.query_content || '';
+          const preview = text.length > 150 ? text.slice(0, 150) + '…' : text;
+
+          // Build sorted model list
+          const scores = MODEL_COLS.map(m => ({
+            name: m,
+            raw: parseFloat(row[m + '_cumsum'] || 0),
+            pct: (parseFloat(row[m + '_cumsum'] || 0) / 500 * 100)
+          })).sort((a, b) => b.pct - a.pct);
+
+          const bars = scores.map(s => {
+            const isBest = s.name === best;
+            const pctLabel = s.pct.toFixed(1) + '%';
+            const barW = Math.min(s.pct, 100).toFixed(1);
+            return `<div class="model-bar-row${isBest ? ' model-bar-best' : ''}">
+              <span class="model-name">${s.name}</span>
+              <div class="bar-track">
+                <div class="bar-fill${isBest ? ' bar-fill-best' : ''}" style="width:${barW}%"></div>
+              </div>
+              <span class="bar-label">${pctLabel}</span>
+            </div>`;
+          }).join('');
+
+          return `<div class="explorer-card">
+            <div class="explorer-question">
+              <span class="badge-best">${best}</span>
+              ${escHtml(preview)}
+            </div>
+            <div class="explorer-bars">${bars}</div>
+          </div>`;
+        }).join('');
+      }
+
+      function escHtml(s) {
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      }
+
+      // ===== CITATION COPY =====
+      function copyCitation() {
+        const text = document.getElementById('citationBlock').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          const btn = document.querySelector('.copy-btn');
+          btn.innerHTML = '<i class="fa fa-check"></i> Copied!';
+          setTimeout(() => { btn.innerHTML = '<i class="fa fa-copy"></i> Copy'; }, 2000);
+        });
+      }
+    </script>
   </body>
 </html>

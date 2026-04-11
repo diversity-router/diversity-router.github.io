@@ -11,6 +11,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: var(--text_color);
@@ -144,6 +148,87 @@ a {
 .aff-nyu     { color: var(--border_color); }
 .aff-stanford { color: #ffb347; }  /* Stanford cardinal → warm amber */
 .aff-cmu     { color: #ff8a8a; }   /* CMU red → soft red */
+
+/* Table of contents — <details>/<summary> style (à la lilianweng.github.io) */
+.toc {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.toc details {
+  background: var(--light_accent_color);
+  border: 1.5px solid var(--border_color);
+  border-radius: 8px;
+  padding: 0.7em 1.1em;
+}
+
+.toc summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  margin-bottom: 0.6em;
+  user-select: none;
+}
+
+.toc summary::-webkit-details-marker {
+  display: none;
+}
+
+.toc summary::before {
+  content: '▶';
+  font-size: 0.6em;
+  color: var(--accent_color);
+  transition: transform 0.2s;
+  display: inline-block;
+}
+
+.toc details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.toc summary:hover .details,
+.toc summary:hover::before {
+  color: var(--dark_accent_color);
+}
+
+.toc .details {
+  font-size: 0.78em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent_color);
+  transition: color 0.15s;
+}
+
+.toc .inner {
+  padding-left: 0.2em;
+}
+
+.toc-list {
+  margin: 0;
+  padding-left: 1.2em;
+  list-style: decimal;
+}
+
+.toc-list li {
+  font-size: 0.93em;
+  line-height: 1.9;
+  color: var(--text_color);
+}
+
+.toc-list a {
+  color: var(--text_color);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.toc-list a:hover {
+  color: var(--accent_color);
+  border-bottom-color: var(--accent_color);
+}
 
 /* Section headings */
 .section-title {
